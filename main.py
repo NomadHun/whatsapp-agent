@@ -19,6 +19,7 @@ async def whatsapp_webhook(
     message = Body
 
     #history = get_session(phone)
+    history = []
     response = get_gpt_response(message, history)
 
     #update_session(phone, message, response)
