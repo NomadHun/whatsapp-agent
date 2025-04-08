@@ -1,13 +1,35 @@
-from openai import OpenAI
+import json
 import os
+from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def get_gpt_response(message, history):
-    messages = [{"role": "system", "content": "Ты — вежливый AI-ассистент по продажам керамогранита. Отвечай только на вопросы, связанные с продукцией. Если вопрос не по теме, напиши: 'Извините, я могу отвечать только по продукции QUASUN.'"}]
+# Загружаем данные из products.json
+with open("products.json", "r", encoding="utf-8") as f:
+    product_data = json.load(f)
 
+# Сформируем краткий текст с описанием ассортимента
+product_summary = "\n".join([
+    f"{p['Название']} ({p['Размер']}, {p['Толщина']}, {p['Поверхность']}, {p['Страна-производитель']}, {p['Цена за кв. м']}₸)"
+    for p in product_data[:30]  # первые 15 товаров
+])
+
+def get_gpt_response(message, history):
+    messages = [
+    {
+        "role": "system",
+        "content": (
+          "Ты ассистент по продажам продукции QUASUN. Старайся отвечать кратко и без нагрузки на клиента. "
+          "Твоя задача подготовить и довести клиента/лида до стадии продажи. "
+          "Когда будут вопросы на счет количесва, тогда соеденить его с коллегой для закрытия продажи!"
+          "Используй каталог ниже, чтобы предлагать плитку и помогать с выбором. "
+            "Если пользователь просит 'обзор', 'рассказать про ассортимент' — приведи краткий список коллекций.\n\n"
+            f"Вот товары:\n{product_summary}"
+        )
+    }
+]
     for exchange in history:
         messages.append({"role": "user", "content": exchange["user"]})
         messages.append({"role": "assistant", "content": exchange["bot"]})
