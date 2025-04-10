@@ -16,20 +16,21 @@ product_summary = "\n".join([
     for p in product_data[:30]  # первые 15 товаров
 ])
 
-def get_gpt_response(message, history):
+def get_gpt_response(message: str, history: list = None) -> str:
     messages = [
     {
         "role": "system",
         "content": (
           "Ты ассистент по продажам продукции QUASUN. Старайся отвечать кратко и без нагрузки на клиента. "
           "Твоя задача подготовить и довести клиента/лида до стадии продажи. "
-          "Когда будут вопросы на счет количесва, тогда соеденить его с коллегой для закрытия продажи!"
           "Используй каталог ниже, чтобы предлагать плитку и помогать с выбором. "
             "Если пользователь просит 'обзор', 'рассказать про ассортимент' — приведи краткий список коллекций.\n\n"
             f"Вот товары:\n{product_summary}"
         )
     }
-]
+]   
+    if history is None:
+        history = []
     for exchange in history:
         messages.append({"role": "user", "content": exchange["user"]})
         messages.append({"role": "assistant", "content": exchange["bot"]})
