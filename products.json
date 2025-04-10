@@ -62,7 +62,7 @@
     "Поверхность": "матовая",
     "Страна-производитель": "Турция",
     "Цена за кв. м": "8000 тг",
-    "image_url": "https://github.com/NomadHun/whatsapp-agent/blob/main/assets/ark_white.png"
+    "image_url": "https://raw.githubusercontent.com/NomadHun/whatsapp-agent/main/assets/ark_white.png"
   },
   {
     "Название": "ARTECH WHITE",
@@ -71,7 +71,7 @@
     "Поверхность": "матовая",
     "Страна-производитель": "Италия",
     "Цена за кв. м": "8000 тг",
-    "image_url": "https://github.com/NomadHun/whatsapp-agent/blob/main/assets/artech_white.png"
+    "image_url": "https://raw.githubusercontent.com/NomadHun/whatsapp-agent/main/assets/artech_white.png"
   },
   {
     "Название": "AURORA",
@@ -128,7 +128,7 @@
     "Поверхность": "полированная",
     "Страна-производитель": "Турция",
     "Цена за кв. м": "8000 тг",
-    "image_url":"https://github.com/NomadHun/whatsapp-agent/blob/main/assets/calacata_goldie.png"
+    "image_url":"https://raw.githubusercontent.com/NomadHun/whatsapp-agent/main/assets/calacata_goldie.png"
   },
   {
     "Название": "CAFE TRAVERTINO",
