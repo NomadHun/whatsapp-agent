@@ -26,16 +26,14 @@ async def whatsapp_webhook(request: Request):
     message = form.get("Body")
     phone = form.get("From")
 
-    # GPT формирует текст
-    gpt_reply = get_gpt_response(message, history=None)
-
     # Пытаемся найти товар в products.json
     matched_product = find_product(message)
     print(f"Matched product: {matched_product}")
+    gpt_reply, send_image = get_gpt_response(message, history=None, product=matched_product)
     image_url = matched_product.get("image_url") if matched_product else None
 
     # Отправка с фото
-    if image_url:
+    if matched_product and send_image and image_url:
         return Response(content=f"""
 <Response>
   <Message>

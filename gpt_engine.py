@@ -12,25 +12,34 @@ with open("products.json", "r", encoding="utf-8") as f:
 
 # Сформируем краткий текст с описанием ассортимента
 product_summary = "\n".join([
-    f"{p['Название']} ({p['Размер']}, {p['Толщина']}, {p['Поверхность']}, {p['Страна-производитель']}, {p['Цена за кв. м']}₸)"
-    for p in product_data[:30]  # первые 15 товаров
+    f"{p['Название']} ({p['Размер']}, {p['Толщина']}, {p['Поверхность']}, {p['Страна-производитель']}, {p['Цена за кв. м']})"
+    for p in product_data[:60]  # первые 15 товаров
 ])
 
-def get_gpt_response(message: str, history: list = None) -> str:
+def get_gpt_response(message: str, history: list = None, product=None) -> tuple[str, bool]:
     messages = [
-    {
-        "role": "system",
-        "content": (
-          "Ты ассистент по продажам продукции QUASUN. Старайся отвечать кратко и без нагрузки на клиента. "
-          "Твоя задача подготовить и довести клиента/лида до стадии продажи. "
-          "Используй каталог ниже, чтобы предлагать плитку и помогать с выбором. "
-            "Если пользователь просит 'обзор', 'рассказать про ассортимент' — приведи краткий список коллекций.\n\n"
-            f"Вот товары:\n{product_summary}"
-        )
-    }
-]   
+        {
+            "role": "system",
+            "content": (
+                "Ты ассистент по продажам продукции QUASUN. Старайся отвечать кратко и без нагрузки на клиента. "
+                "Если пользователь интересуется визуальной частью товара (например, просит 'показать', 'фото', 'как выглядит', 'картинка') — добавь в конец ответа специальную метку [SEND_IMAGE]."
+                "Твоя задача подготовить и довести клиента/лида до стадии продажи. "
+                "Используй каталог ниже, чтобы предлагать плитку и помогать с выборами. "
+                "Если пользователь просит 'обзор', расскажи про ассортимент – приведи краткий список коллекций.\n\n"
+                f"Вот товары:\n{product_summary}"
+            )
+        }
+    ]
+
+    if product:
+        messages.append({
+            "role": "system",
+            "content": f"Информация о выбранном товаре: {product}"
+        })
+
     if history is None:
         history = []
+
     for exchange in history:
         messages.append({"role": "user", "content": exchange["user"]})
         messages.append({"role": "assistant", "content": exchange["bot"]})
@@ -42,4 +51,8 @@ def get_gpt_response(message: str, history: list = None) -> str:
         messages=messages
     )
 
-    return response.choices[0].message.content
+    full_text = response.choices[0].message.content.strip()
+    send_image = full_text.strip().endswith("[SEND_IMAGE]")
+    reply = full_text.replace("SEND_IMAGE", "").strip()
+
+    return reply, send_image
