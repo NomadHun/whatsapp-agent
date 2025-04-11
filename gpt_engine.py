@@ -27,7 +27,8 @@ def get_gpt_response(message: str, history: list = None, product=None) -> tuple[
                 "Твоя задача подготовить и довести клиента/лида до стадии продажи. "
                 "Используй каталог ниже, чтобы предлагать плитку и помогать с выборами. "
                 "Если пользователь просит 'обзор', расскажи про ассортимент – приведи краткий список коллекций.\n\n"
-                f"Вот товары:\n{product_summary}"
+                f"Вот товары:\n{product_summary} "
+                "Если в ответе нужно отправить фото, добавь в самом конце метку [SEND_IMAGE] без дополнительных символов после неё (включая скобки, точки, кавычки и прочее)."
             )
         }
     ]
@@ -64,6 +65,11 @@ def get_gpt_response(message: str, history: list = None, product=None) -> tuple[
 
     full_text = response.choices[0].message.content.strip()
     send_image = full_text.strip().endswith("[SEND_IMAGE]")
-    reply = full_text.replace("SEND_IMAGE", "").strip()
+    
+    print("=== RAW GPT RESPONSE ===")
+    print(full_text)
+    print("========================")
+
+    reply = full_text.replace("[SEND_IMAGE]", "").replace("SEND_IMAGE", "").replace("[]", "").strip()
 
     return reply, send_image

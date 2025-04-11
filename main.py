@@ -10,13 +10,14 @@ app = FastAPI()
 with open("products.json", encoding="utf-8") as f:
     products = json.load(f)
 
+def normalize(text):
+    return re.sub(r"\s+", " ", text.lower().strip())
+
 def find_product(message: str):
-    message_lower = message.lower()
+    message_lower = normalize(message)
     for product in products:
-        name = product.get("Название", "").lower()
-        # Удаляем все лишние символы и разбиваем на слова
-        name_keywords = re.findall(r"\w+", name)
-        if any(keyword in message_lower for keyword in name_keywords):
+        name = normalize(product.get("Название", ""))
+        if name in message_lower or message_lower in name:
             return product
     return None
 
