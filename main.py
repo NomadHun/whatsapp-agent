@@ -3,6 +3,7 @@ from fastapi.responses import Response
 import json
 import re
 from gpt_engine import get_gpt_response
+from rapidfuzz import process
 
 app = FastAPI()
 
@@ -14,11 +15,21 @@ def normalize(text):
     return re.sub(r"\s+", " ", text.lower().strip())
 
 def find_product(message: str):
-    message_lower = normalize(message)
+    message = normalize(message)
+
+    # Точное совпадение по названию
     for product in products:
         name = normalize(product.get("Название", ""))
-        if name in message_lower or message_lower in name:
+        if name == message:
             return product
+        
+    # Fuzzy matching
+    names = [normalize(p.get("Название", "")) for p in products]
+    match = process.extractOne(message, names, score_cutoff=80)
+    if match:
+        matched_name = match[0]
+        return next((p for p in products if normalize(p.get("Название", "")) == matched_name), None)
+
     return None
 
 @app.post("/webhook")
