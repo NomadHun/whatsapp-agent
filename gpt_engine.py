@@ -60,7 +60,7 @@ def get_gpt_response(message: str, history: list = None, product=None) -> tuple[
     messages.append({"role": "user", "content": message})
 
     response = client.chat.completions.create(
-        model="gpt-4-turbo",
+        model="gpt-4.1-nano",
         messages=messages
     )
 
